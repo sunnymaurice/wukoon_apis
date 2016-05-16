@@ -1,0 +1,12 @@
+{
+    "DB_HOST":              "localhost:41262/",
+    "DB_USER":              "oseriocn",
+    "DB_PWD":               "Oserio2016",
+
+    "DB_NAME":              "weixin_scale",
+
+    "COLL_ACCESS_TOKEN":    "wukoon_access_token",
+    "COLL_DEVICES":         "wukoon_devices",
+    "COLL_USER_HEALTH_REC": "user_health_records",
+    "COLL_CONFLICT_REC":	"conflict_records"
+}

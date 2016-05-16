@@ -1,0 +1,20 @@
+{
+    "WK_APPID":             "SJq0OyDb",
+    "WK_APPSECRET":         "HJgcAd1D-",
+    "WK_TYPE_TOKEN":        "ACCESS_TOKEN",
+
+    "WK_BASE_URL":          "http://120.24.216.153:8000",
+    "WK_TEST_URL":          "http://59.125.94.116/oserio_cn/wukoon_res.php",
+    
+    "WK_TOKEN_QUERY":       "/token?",
+    "WK_TYPE_NAME":         "type",
+    "WK_APPID_NAME":        "appId",
+    "WK_APPSECRECT_NAME":   "appSecret",
+    "WK_ACCESS_TOKEN_NAME": "accessToken",
+
+    "WK_DEV_ENTRY_URL":     "/device/",
+    "WK_DEV_DP_STATUS_URL": "/status/",
+    "WK_DEV_STATUS_QUERY":  "/status?",
+    "WK_COMMAND_QUERY":     "/sendCommand?"
+    
+}

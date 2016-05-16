@@ -1,0 +1,37 @@
+{
+  "name": "wukoon_apis",
+  "version": "0.0.1",
+  "description": "The middleware to bridge the devices information transmission between Oserio Weixin server and wukoon cloud platform.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --use_strict index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "crypto": "0.0.3",
+    "express": "^4.13.4",
+    "mongodb": "^2.1.10",
+    "request": "^2.69.0",
+    "xml2js": "^0.4.16"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.1"
+  },
+  "engines": {
+    "node": "4.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunnymaurice/wukoon_apis.git"
+  },
+  "keywords": [
+    "Wukoon",
+    "Weixin"
+  ],
+  "author": "Ming-Huang Sun <sun.ming.huang@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sunnymaurice/wukoon_apis/issues"
+  },
+  "homepage": "https://github.com/sunnymaurice/wukoon_apis#readme"
+}

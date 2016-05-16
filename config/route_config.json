@@ -1,0 +1,9 @@
+{
+    "HOST_ADDRESS":         "http://service.charder.com.tw:8080",
+
+    "WX_PREFIX":            "/wechat",
+    "WX_PUBLIC_ENTRY":      "/public-entry",
+
+    "WK_PREFIX":            "/wukoon",
+    "WK_DEVICE_ENTRY":      "/device_entry"
+}
