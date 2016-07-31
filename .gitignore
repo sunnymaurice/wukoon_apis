@@ -1,6 +1,10 @@
 # Specifies files to intentionally ignore when using Git
 # http://git-scm.com/docs/gitignore
-
+.eslintrc.js
 node_modules/
+product_type/
+route/route.js
+test*.js
+main.js
 *.log
 test/

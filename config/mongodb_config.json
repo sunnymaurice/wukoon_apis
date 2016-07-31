@@ -3,10 +3,11 @@
     "DB_USER":              "oseriocn",
     "DB_PWD":               "Oserio2016",
 
-    "DB_NAME":              "weixin_scale",
+    "DB_NAME":              "wukoon_device",
 
-    "COLL_ACCESS_TOKEN":    "wukoon_access_token",
-    "COLL_DEVICES":         "wukoon_devices",
-    "COLL_USER_HEALTH_REC": "user_health_records",
-    "COLL_CONFLICT_REC":	"conflict_records"
+    "COLL_WKACCESS_TOKEN":  "wukoon_access_token",
+    "COLL_DEV_MODIFY_REC":  "wukoon_dev_modify_record",
+    "COLL_AUTH_DEV_LIST":		"weixin_auth_dev_list",
+    "COLL_USER_REC":        "user_records",
+    "COLL_CONFLICT_REC":    "unknown_user_data"
 }

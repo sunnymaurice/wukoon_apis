@@ -1,0 +1,13 @@
+{
+  "EVENT_DEV_WEIGHT_NOTIFY":  "wukoon.weight.notify",
+  "EVENT_DEV_DETAIL_NOTIFY":  "wukoon.detail.notify",
+  "EVENT_DEV_BATT_ALERT":     "wukoon.battery.alert",
+  "EVENT_DEV_OVERLOAD_ALERT": "wukoon_overload.alert",
+  "EVENT_DEV_ONLINE":         "wukoon.dev.online",
+  "EVENT_DEV_OFFLINE":        "wukoon.dev.offline",
+  "EVENT_DEV_ALERT":          "wukoon.dev.alert",
+  "EVENT_DEV_APPLY_AUTH":     "wukoon.weixin.auth",
+  "EVENT_DEV_UNKNOWN_STATUS": "wukoon.status.unknown",
+  "EVENT_DEV_UNKNOWN_EVENT":  "wukoon.event.unknown",
+  "EVENT_DEV_UNKNOWN_INFO":   "wukoon.info.unknown"
+}

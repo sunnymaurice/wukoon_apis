@@ -1,9 +1,21 @@
 {
-    "HOST_ADDRESS":         "http://service.charder.com.tw:8080",
+    "TEST_ADDRESS":         "http://localhost",
+    "SERVER_ADDRESS":       "http://oserio-wechat.myoserio.com",
 
-    "WX_PREFIX":            "/wechat",
-    "WX_PUBLIC_ENTRY":      "/public-entry",
+    "WK_DEVICE_ENTRY":      "/wukoon_entry",
 
-    "WK_PREFIX":            "/wukoon",
-    "WK_DEVICE_ENTRY":      "/device_entry"
+    "MSG_TYPE_STATUS":      "STATUS",
+    "MSG_TYPE_EVENT":       "EVENT",
+    "MSG_TYPE_INFO":        "INFO",
+
+    "EVENT_ONLINE":         "online",
+    "EVENT_OFFLINE":        "offline",
+    "EVENT_ALERT":          "alert",
+
+    "RES_DEVID_FIELD":      "deviceId",
+    "RES_MSGTYPE_FIELD":    "msgType",
+    "RES_MSGID_FIELD":      "msgId",
+    "RES_MODEL_FIELD":      "model",
+    "RES_EVENT_FIELD":      "event",
+    "RES_TIME_FIELD":       "creatTime"
 }
