@@ -3,8 +3,7 @@
 .eslintrc.js
 node_modules/
 product_type/
+test/
 route/route.js
-test*.js
 main.js
 *.log
-test/

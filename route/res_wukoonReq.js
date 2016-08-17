@@ -13,6 +13,24 @@
  *  Reference: Wukoon API document v1.20
  */
 var ResWukoonReq = (function () {
+
+	/**
+	 *  constructor
+	 *  @param {instance of db} dbapi the instance of MongodbInterface module
+	 *  @param {object} routecfg Route configuration in json format
+	 *  @param {object} wkcfg Wukoon configuration in json format
+	 *  @param {object} evdef Event definition in json format
+	 *  @param {object} eventemitter An eventEmitter object
+	 */
+	function ResWukoonReq(dbapi, routecfg, wkcfg, evdef, eventemitter) {
+		//this.sha1 = require('sha1');
+		this.dbApi = dbapi;
+		this.routeCfg = routecfg;
+		this.wkCfg = wkcfg;
+		this.evDef = evdef;
+		this.evEmitter = eventemitter;	//event emitter's instance
+	}
+	/* ----------- Functions below are local functions. ----------- */
 	/**
 	 * 以json回應要求
    * @param {any} res remote response to client
@@ -33,7 +51,7 @@ var ResWukoonReq = (function () {
 	 *  @param req from wukoon to our wukoon service
 	 *  @return {Object} Non-empty object means valid, null represets invalid instead.
 	 */
-	function checkReqContent(req)
+	function checkReqContent(req, route)
 	{
 		var tempResJson = {};
 		// Check content of the request is valid, otherwise, response 'Bad request'.
@@ -45,16 +63,16 @@ var ResWukoonReq = (function () {
 				createTime: req.body.createTime
 			};
 
-			if(req.body.msgType === this.routeCfg.MSG_TYPE_STATUS)
+			if(req.body.msgType === route.MSG_TYPE_STATUS)
 			{
 				tempResJson.deviceId = req.body.deviceId;
 			}
-			else if(req.body.msgType === this.routeCfg.MSG_TYPE_EVENT){
+			else if(req.body.msgType === route.MSG_TYPE_EVENT){
 				tempResJson.deviceId = req.body.deviceId;
 				tempResJson.event = req.body.event;
 			}
 			else {
-				if(req.body.msgType !== this.routeCfg.MSG_TYPE_INFO)
+				if(req.body.msgType !== route.MSG_TYPE_INFO)
 				{
 					console.error('**** unexpected msgType in this reqest!!! ****');
 					return null;
@@ -74,7 +92,7 @@ var ResWukoonReq = (function () {
 	 *  @param
 	 *  @return event with the supplied argument, 'retInfo', for the listeners defined in core service server.
 	 */
-	function handleDevStatusNotification(req, res) {
+	function handleDevStatusNotification(req, res, event, eventDef) {
 		let retInfo = {
 			deviceId: req.body.deviceId,	// 'deviceId' will be the key to know the group of users boudn to this device.
 			msgId: req.body.msgId,
@@ -89,6 +107,7 @@ var ResWukoonReq = (function () {
 		// The content should not be empty
 		if(contentStr.length === 0)
 		{
+			console.error('Device Status with empty content!!!');
 			responseJSON(res, null);
 			return;
 		}
@@ -105,31 +124,31 @@ var ResWukoonReq = (function () {
 
 		}
 		*/
-
+		console.log('Device Status with content: '+contentStr);
 		contentObj = JSON.parse(contentStr);
 
 		// Weight measurement notification.
 		if(typeof contentObj.weight !== 'undefined' && contentObj.weight)
 		{
 			retInfo.weight = contentObj.weight;
-			console.log('receive weight data and ret info: ' + retInfo);
-			this.evEmitter.emit(this.evDef.EVENT_DEV_WEIGHT_NOTIFY, retInfo);
+			console.log('receive weight data and ret info: ' + JSON.stringify(retInfo));
+			event.emit(eventDef.EVENT_DEV_WEIGHT_NOTIFY, retInfo);
 		}
 		// Device battery alert.
 		else if(typeof contentObj.battAlert !== 'undefined' && contentObj.battAlert)
 		{
 			retInfo.battAlert = 1;
-			console.log('receive battery aleert and ret info: ' + retInfo);
+			console.log('receive battery alert and ret info: ' + JSON.stringify(retInfo));
 			//TODO: call Mongodb function API to save this type of alert in the collection: xxx
-			this.evEmitter.emit(this.evDef.EVENT_DEV_BATT_ALERT, retInfo);
+			event.emit(eventDef.EVENT_DEV_BATT_ALERT, retInfo);
 		}
 		// Device overload alert
 		else if(typeof contentObj.overload !== 'undefined' && contentObj.overload)
 		{
 			retInfo.overload =1;
-			console.log('receive overload aleert and ret info: ' + retInfo);
+			console.log('receive overload aleert and ret info: ' + JSON.stringify(retInfo));
 			//TODO: call Mongodb function API to save this type of alert in the collection: xxx
-			this.evEmitter.emit(this.evDef.EVENT_DEV_OVERLOAD_ALERT, retInfo);
+			event.emit(eventDef.EVENT_DEV_OVERLOAD_ALERT, retInfo);
 		}
 		// TODO: Device publish data faliure
 		// Device detail notification after receive getDevDetail command
@@ -139,12 +158,12 @@ var ResWukoonReq = (function () {
 			retInfo.battVol = parseInt(contentObj.battVol);
 			retInfo.fwVer = contentObj.fwVer;
 			retInfo.swVer = contentObj.swVer;
-			console.log('receive device detail info: ' + retInfo);
-			this.evEmitter.emit(this.evDef.EVENT_DEV_DETAIL_NOTIFY, retInfo);
+			console.log('receive device detail info: ' + JSON.stringify(retInfo));
+			event.emit(eventDef.EVENT_DEV_DETAIL_NOTIFY, retInfo);
 		}
 		else { 	// Should not happened.
 			console.warn('**** Wukoon send unsupported conetent request!!! ****\n');
-			this.evEmitter.emit(this.evDef.EVENT_DEV_UNKNOWN_STATUS, {msg: contentStr});
+			event.emit(eventDef.EVENT_DEV_UNKNOWN_STATUS, {msg: contentStr});
 		}
 	}
 	/*
@@ -153,7 +172,7 @@ var ResWukoonReq = (function () {
 	 *  TODO: Haven't define any alert event at this stage.
 	 *  @return event
 	 */
-	function handleDevEventNotification(req, res) {
+	function handleDevEventNotification(req, res, event, eventDef, routeCfg) {
 		let retInfo = {
 			deviceId: req.body.deviceId, 	// 'deviceId' will be the key to know the group of users boudn to this device.
 			msgId: req.body.msgId,
@@ -165,30 +184,30 @@ var ResWukoonReq = (function () {
 
 		console.log('ResWukoonReq::handleDevEventNotification\n');
 		// The content should not be empty. Although, we haven't adopt this scheme so far.
-		if(req.body.event === this.routeCfg.EVENT_ALERT && contentStr.length === 0)
+		if(req.body.event === routeCfg.EVENT_ALERT && contentStr.length === 0)
 		{
 			responseJSON(res, null);
 			return;
 		}
 		// Emit event to the core service accordingly.
-		if(req.body.event === this.routeCfg.EVENT_ONLINE) {
+		if(req.body.event === routeCfg.EVENT_ONLINE) {
 			console.log('receive device event: online');
 			//TODO: call Mongodb function API to save this event in the collection: xxx
-			this.evEmitter.emit(this.evDef.EVENT_DEV_ONLINE, retInfo);
+			event.emit(eventDef.EVENT_DEV_ONLINE, retInfo);
 		}
-		else if(req.body.event === this.routeCfg.EVENT_OFFLINE) {
+		else if(req.body.event === routeCfg.EVENT_OFFLINE) {
 			console.log('receive device event: offline');
 			//TODO: call Mongodb function API to save this event in the collection: yyy
-			this.evEmitter.emit(this.evDef.EVENT_DEV_OFFLINE, retInfo);
+			event.emit(eventDef.EVENT_DEV_OFFLINE, retInfo);
 		}
-		else if(req.body.event === this.routeCfg.EVENT_ALERT) {
+		else if(req.body.event === routeCfg.EVENT_ALERT) {
 			console.log('receive device event: alert');
 			retInfo.alertMsg = contentStr;
-			this.evEmitter.emit(this.evDef.EVENT_DEV_ALERT, retInfo);
+			event.emit(eventDef.EVENT_DEV_ALERT, retInfo);
 		}
 		else { 	// Should not happened.
 			console.warn('**** Wukoon send unsupported conetent request!!! ****\n');
-			this.evEmitter.emit(this.evDef.EVENT_DEV_UNKNOWN_EVENT, retInfo);
+			event.emit(teventDef.EVENT_DEV_UNKNOWN_EVENT, retInfo);
 		}
 	}
 	/**
@@ -205,7 +224,7 @@ var ResWukoonReq = (function () {
 	 		]
    * }
 	 */
-	function handleDevInfoNotification(req, res) {
+	function handleDevInfoNotification(req, res, event, eventDef, db) {
 		let devNum = req.body.content.length;
 		let action = '';
 		//The device number should not be empty or greater than 5 at a time.
@@ -231,14 +250,15 @@ var ResWukoonReq = (function () {
 		retInfo.device_list = dList;
 		action = 'insertNew';
 		//TODO: call Mongod DB function to keep information in DB.
-		this.dbApi.saveAuthDeviceInfo(retInfo, action);
-		this.evEmitter.emit(this.evDef.EVENT_DEV_APPLY_AUTH, retInfo);
+		db.saveAuthDeviceInfo(retInfo, action);
+		event.emit(eventDef.EVENT_DEV_APPLY_AUTH, retInfo);
 	}
 
 	/**
 	 使用Wukoon設定的Token字串，檢查Wukoon傳送過來的簽名是否正確
 	 @param {any} param 微信傳送過來的簽名JSON
 	 */
+	/*
 	function checkWukoonSignature(param) {
 			// 按照字典排序
 			let array = [this.wkcfg.WK_AUTHTOKEN, param.timestamp, param.nonce].sort();
@@ -250,23 +270,8 @@ var ResWukoonReq = (function () {
 					return false;
 			}
 	}
+	*/
 	/* ----------- Functions above are local functions. ----------- */
-	/**
-	 *  constructor
-	 *  @param {instance of db} dbapi the instance of MongodbInterface module
-	 *  @param {object} routecfg Route configuration in json format
-	 *  @param {object} wkcfg Wukoon configuration in json format
-	 *  @param {object} evdef Event definition in json format
-	 *  @param {object} eventemitter An eventEmitter object
-	 */
-	function ResWukoonReq(dbapi, routecfg, wkcfg, evdef, eventemitter) {
-		//this.sha1 = require('sha1');
-		this.dbApi = dbapi;
-		this.routeCfg = routecfg;
-		this.wkCfg = wkcfg;
-		this.evDef = evdef;
-		this.evEmitter = eventemitter;	//event emitter's instance
-	}
 
 	/**
 	 * 處理 Wukoon平台的GET請求
@@ -299,11 +304,11 @@ var ResWukoonReq = (function () {
 	 */
 	ResWukoonReq.prototype.wukoonEntryPOST = function (req, res) {
 		console.log('++++ Receive wukoon POST request! ++++\n');
-		console.log(req.query);
-		console.log(req.body);
-		var self = this;
+		//console.log(req.query);
+		console.log("wukoonEntryPOST: request contetn: "+ JSON.stringify(req.body));
+		//var self = this;
 		var resJson = {};
-		resJson = checkReqContent(req);
+		resJson = checkReqContent(req, this.routeCfg);
 		// 1. Response Reqeust first.
 		responseJSON(res, resJson);
 		// 2. Reaction to notify core service a variant kind of events according to msgType and its content.
@@ -314,18 +319,18 @@ var ResWukoonReq = (function () {
 			 *    (2). 電量不足消息內容： {"battAlert": 1}
 			 *    (3). 回應用戶指令 getDevDetail 內容：{"battVol": 3, "fwVer": "xxxx", "swVer": "yyyy"}
 			 */
-			case self.routeCfg.MSG_TYPE_STATUS:
-				handleDevStatusNotification(req, res);
+			case this.routeCfg.MSG_TYPE_STATUS:
+				handleDevStatusNotification(req, res, this.evEmitter, this.evDef);
 				break;
-			case self.routeCfg.MSG_TYPE_EVENT:
-				handleDevEventNotification(req, res);
+			case this.routeCfg.MSG_TYPE_EVENT:
+				handleDevEventNotification(req, res, this.evEmitter, this.evDef, this.routeCfg);
 				break;
 			/*
 			 * 設備信息消息： 接收來自wukoon 產品介面上推送已經註冊的設備信息，並且替這些設備做[微信授權]
 			 *
 			 */
-			case self.routeCfg.MSG_TYPE_INFO:
-				handleDevInfoNotification(req, res);
+			case this.routeCfg.MSG_TYPE_INFO:
+				handleDevInfoNotification(req, res, this.evEmitter, this.evDef, this.dbApi);
 				break;
 			default:
 				console.error('wukoonEntryPOST: receive unsupported message type:' + req.body.msgType);

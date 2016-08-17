@@ -254,4 +254,4 @@
     };
     return MongodbInterface;
 }());
-module.exports = exports = new MongodbInterface();
+exports.MongodbInterface = MongodbInterface;

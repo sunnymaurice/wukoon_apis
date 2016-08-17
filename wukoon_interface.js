@@ -2,14 +2,14 @@
 var WukoonInterface = (function () {
   function WukoonInterface (expressApp, mongoDBinstance, options) {
       var self = this;
-      this.rtcfg = require('global.__base/config/route_config.json');
-      this.wkcfg = require('global.__base/config/wukoon_config.json');
-      this.dbcfg = require('global.__base/config/mongodb_config.json');
-      this.evdef = require('global.__base/config/event_def.json');
+      this.rtcfg = require('./config/route_config.json');
+      this.wkcfg = require('./config/wukoon_config.json');
+      this.dbcfg = require('./config/mongodb_config.json');
+      this.evdef = require('./config/event_def.json');
       var events = require('events');
-      var MongodbOperation = require('global.__base/db/mongodb.js').MongodbInterface;
-      var WukoonAPI = require('global.__base/wukoon_bridge/wukoon_bridge.js').WukoonAPI;
-      var ActionResWukoonReq = require('global.__base/route/res_wukoonReq.js').ResWukoonReq;
+      var MongodbOperation = require('./db/mongodb.js').MongodbInterface;
+      var WukoonAPI = require('./wukoon_bridge/wukoon_bridge.js').WukoonAPI;
+      var ActionResWukoonReq = require('./route/res_wukoonReq.js').ResWukoonReq;
       this.options = options ? options : {};
       this.eventEmitter = new events.EventEmitter(); // 宣告事件廣播器
       this.eventEmitter.setMaxListeners(20); // 設定最多20個事件(預設10個)
@@ -21,7 +21,10 @@ var WukoonInterface = (function () {
       // 設定接受物空平台的接口路由位置
       expressApp.get(this.rtcfg.WK_DEVICE_ENTRY, function (req, res) { self.actResWukoonReq.wukoonEntryGET(req, res); });
       expressApp.post(this.rtcfg.WK_DEVICE_ENTRY, function (req, res) { self.actResWukoonReq.wukoonEntryPOST(req, res); });
-
+      // Fail through for those who try to send request from invalid route.
+      expressApp.use(function(req, res){
+        res.sendStatus(404);
+    });
   }
 
   /**
@@ -43,7 +46,7 @@ var WukoonInterface = (function () {
     return this.wuKoonAPI.sendCommandToDevice(deviceId, commandObj);
   };
 
-  WukoonInterface.prototyp.queryDeviceStatus = function(){
+  WukoonInterface.prototype.queryDeviceStatus = function(){
 
   };
 

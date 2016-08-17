@@ -678,4 +678,4 @@ var WukoonAPI = (function () {
 
     return WukoonAPI;
 }());
-module.exports = exports = new WukoonAPI();
+exports.WukoonAPI = WukoonAPI;

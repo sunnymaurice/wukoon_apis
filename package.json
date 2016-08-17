@@ -26,16 +26,26 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sunnymaurice/wukoon_apis.git"
+    "url": "git+https://github.com/sunnymaurice/wukoon_apis.git"
   },
   "keywords": [
     "Wukoon",
     "Weixin"
   ],
-  "author": "Ming-Huang Sun <sun.ming.huang@gmail.com>",
+  "author": {
+    "name": "Ming-Huang Sun",
+    "email": "sun.ming.huang@gmail.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sunnymaurice/wukoon_apis/issues"
   },
-  "homepage": "https://github.com/sunnymaurice/wukoon_apis#readme"
+  "homepage": "https://github.com/sunnymaurice/wukoon_apis#readme",
+  "readme": "# wukoon_apis\nThis is the middle software to handle all APIs provided by Wukoon cloud platform so that the OserioCN's weixin server can connect to the end devices to retrieve data from them or send requests to them.\n",
+  "readmeFilename": "README.md",
+  "gitHead": "1a3cf7eec6c1036038b8260cce74acba33cc0d5f",
+  "_id": "wukoon_apis@0.0.2",
+  "_shasum": "539a745fbb83666055732a8eaf5266634634a5d4",
+  "_from": "../node_project/wukoon_apis",
+  "_resolved": "file:../node_project/wukoon_apis"
 }
